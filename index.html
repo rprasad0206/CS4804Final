@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>3D Tilted US Map with Zoom</title>
+  <title>3D Tilted US Map with Zoom & Highlight</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
     body {
@@ -17,7 +17,7 @@
       display: block;
       transform: rotateX(35deg) rotateY(0deg);
       transform-origin: center center;
-      filter: drop-shadow(5px 10px 5px rgba(0, 0, 0, 0.5)); 
+      filter: drop-shadow(5px 10px 5px rgba(0, 0, 0, 0.5));
     }
     .tooltip {
       position: absolute;
@@ -28,7 +28,7 @@
       pointer-events: none;
       font-size: 12px;
       display: none;
-      z-index: 1000; 
+      z-index: 1000;
     }
   </style>
 </head>
@@ -40,7 +40,7 @@
     const width = window.innerWidth;
     const height = window.innerHeight;
     let zoomedState = null;
-    
+
     const svg = d3.select("#map")
                   .attr("width", width)
                   .attr("height", height)
@@ -83,22 +83,21 @@
         function clicked(event, d) {
           if (zoomedState === d) {
             reset();
-            zoomedState = null;
           } else {
             const [[x0, y0], [x1, y1]] = path.bounds(d);
             event.stopPropagation();
             
-            // Calculate zoom scale
             const zoomScale = Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height));
             
-            // Apply zoom transformation
             g.transition().duration(750).attr("transform",
               `translate(${width / 2}, ${height / 2}) scale(${zoomScale}) translate(${-((x0 + x1) / 2)}, ${-((y0 + y1) / 2)})`
             );
 
-            // Adjust tooltip size based on zoom level
-            tooltip.style("font-size", `${12 * zoomScale}px`)  // Increase font size
-                   .style("padding", `${5 * zoomScale}px`);   // Increase padding
+            tooltip.style("font-size", `${12 * zoomScale}px`)
+                   .style("padding", `${5 * zoomScale}px`);
+            
+            states.attr("fill", "#cccccc"); // Reset all states
+            d3.select(event.target).attr("fill", "#ffcc00"); // Highlight selected state
 
             zoomedState = d;
           }
@@ -111,8 +110,8 @@
     function reset() {
       g.transition().duration(750).attr("transform", "translate(0,0) scale(1)");
       zoomedState = null;
-
-      // Reset tooltip size
+      
+      d3.selectAll("path").attr("fill", "#cccccc"); // Reset highlight
       tooltip.style("font-size", "12px")
              .style("padding", "5px");
     }
