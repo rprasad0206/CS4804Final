@@ -1,223 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Laser Incident Visualizations</title>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="injuryAnalysis.js" defer></script> <!-- Link to external injury analysis JS -->
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f0f0f0;
-    }
-    h1 {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .nav {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-top: 20px;
-    }
-    .nav button {
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    .nav button:hover {
-      background-color: #0056b3;
-    }
-    .content {
-      display: none;
-      margin-top: 20px;
-    }
-    .content.active {
-      display: block;
-    }
-    .tooltip {
-      position: absolute;
-      background: white;
-      padding: 5px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      pointer-events: none;
-      font-size: 12px;
-      display: none;
-      z-index: 1000;
-    }
-    /* Map-specific styles */
-    #map-container {
-      perspective: 1500px;
-    }
-    #map {
-      width: 100%;
-      height: 80vh;
-      transform: rotateX(35deg) rotateY(0deg);
-      transform-origin: center center;
-      filter: drop-shadow(5px 10px 5px rgba(0, 0, 0, 0.5));
-    }
-    /* Injury Analysis-specific styles */
-    .filter {
-      margin-bottom: 20px;
-    }
-    .chart {
-      margin-top: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Injury Analysis Map</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .tabs {
+            display: flex;
+            background-color: #333;
+            padding: 10px;
+        }
+
+        .tab {
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .tab:hover {
+            background-color: #575757;
+        }
+
+        .active {
+            background-color: #4CAF50;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .active-tab-content {
+            display: block;
+        }
+
+        #filters {
+            margin: 20px 0;
+        }
+
+        #filters label {
+            margin-right: 10px;
+        }
+
+        #injury-analysis-map {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+        }
+
+        #tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px;
+            display: none;
+        }
+
+        #state-info-container {
+            padding: 20px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
-  <h1>Laser Incident Visualizations</h1>
-
-  <!-- Navigation Menu -->
-  <div class="nav">
-    <button onclick="showTab('map-container')">3D Tilted US Map</button>
-    <button onclick="showTab('injury-analysis')">Injury Analysis</button>
-  </div>
-
-  <!-- Map Content -->
-  <div id="map-container" class="content active">
-    <div class="tooltip" id="map-tooltip"></div>
-    <svg id="map"></svg>
-  </div>
-
-  <!-- Injury Analysis Content -->
-  <div id="injury-analysis" class="content">
-    <h2>Injury Analysis</h2>
-
-    <!-- Filters -->
-    <div class="filter">
-      <label for="laser-color-filter">Select Laser Color:</label>
-      <select id="laser-color-filter"></select>
-
-      <label for="state-filter">Select State:</label>
-      <select id="state-filter"></select>
-
-      <label for="aircraft-filter">Select Aircraft Type:</label>
-      <select id="aircraft-filter"></select>
+    <!-- Tab navigation -->
+    <div class="tabs">
+        <div class="tab active" id="tiltedMapTab">3D Tilted US Map</div>
+        <div class="tab" id="injuryAnalysisTab">Injury Analysis</div>
     </div>
 
-    <!-- Charts -->
-    <div id="bar-chart" class="chart"></div>
-    <div id="pie-chart" class="chart"></div>
+    <!-- Tab content -->
+    <div id="tiltedMapContent" class="tab-content active-tab-content">
+        <h2>3D Tilted US Map</h2>
+        <svg id="map"></svg>
+        <div id="tooltip"></div>
+    </div>
 
-    <!-- Tooltip -->
-    <div id="injury-tooltip" class="tooltip"></div>
-  </div>
+    <div id="injuryAnalysisContent" class="tab-content">
+        <h2>Injury Analysis</h2>
 
-  <script>
-    // Function to switch between tabs
-    function showTab(tabId) {
-      // Hide all content
-      document.querySelectorAll('.content').forEach(content => {
-        content.classList.remove('active');
-      });
+        <!-- Filters for Injury Analysis -->
+        <div id="filters">
+            <label for="laser-color-filter">Laser Color:</label>
+            <select id="laser-color-filter">
+                <option value="All">All</option>
+            </select>
 
-      // Show the selected content
-      document.getElementById(tabId).classList.add('active');
-    }
+            <label for="aircraft-filter">Aircraft:</label>
+            <select id="aircraft-filter">
+                <option value="All">All</option>
+            </select>
 
-    // Load the data from the JSON file
-    d3.json("top_laser_colors.json").then(data => {
-      // Initialize the map and injury analysis
-      initMap(data);
-      initInjuryAnalysis(data);
-    }).catch(error => {
-      console.error("Error loading data:", error);
-    });
+            <label for="state-filter">State:</label>
+            <select id="state-filter">
+                <option value="All">All</option>
+            </select>
+        </div>
 
-    // Initialize the map visualization
-    function initMap(data) {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      let zoomedState = null;
+        <!-- SVG for Injury Map -->
+        <svg id="injury-analysis-map"></svg>
+        <div id="tooltip"></div>
 
-      const svg = d3.select("#map")
-                    .attr("width", width)
-                    .attr("height", height)
-                    .call(d3.zoom().scaleExtent([1, 8]).on("zoom", zoomed));
+        <!-- State Information Container -->
+        <div id="state-info-container"></div>
+    </div>
 
-      const g = svg.append("g");
-      const tooltip = d3.select("#map-tooltip");
+    <script src="https://d3js.org/d3.v7.min.js"></script>
 
-      const projection = d3.geoAlbersUsa()
-                           .translate([width / 2, height / 2])
-                           .scale(1000);
+    <!-- Include the JS files for both maps -->
+    <script src="tiltedMap.js"></script>
+    <script src="injuryAnalysis.js"></script>
 
-      const path = d3.geoPath().projection(projection);
+    <script>
+        // Switch between tabs
+        const tiltedMapTab = document.getElementById("tiltedMapTab");
+        const injuryAnalysisTab = document.getElementById("injuryAnalysisTab");
+        const tiltedMapContent = document.getElementById("tiltedMapContent");
+        const injuryAnalysisContent = document.getElementById("injuryAnalysisContent");
 
-      d3.json("ne_110m_admin_1_states_provinces.json")
-        .then(geoData => {
-          const states = g.selectAll("path")
-            .data(geoData.features)
-            .enter()
-            .append("path")
-            .attr("d", path)
-            .attr("fill", "#cccccc")
-            .attr("stroke", "#333")
-            .attr("stroke-width", 1)
-            .on("click", clicked)
-            .on("mouseover", (event, d) => {
-              tooltip.style("display", "block")
-                     .text(d.properties.name)
-                     .style("left", (event.pageX + 10) + "px")
-                     .style("top", (event.pageY + 10) + "px");
-            })
-            .on("mousemove", (event) => {
-              tooltip.style("left", (event.pageX + 10) + "px")
-                     .style("top", (event.pageY + 10) + "px");
-            })
-            .on("mouseout", () => {
-              tooltip.style("display", "none");
-            });
+        tiltedMapTab.addEventListener("click", () => {
+            tiltedMapTab.classList.add("active");
+            injuryAnalysisTab.classList.remove("active");
 
-          function clicked(event, d) {
-            if (zoomedState === d) {
-              reset();
-            } else {
-              const [[x0, y0], [x1, y1]] = path.bounds(d);
-              event.stopPropagation();
-              
-              const zoomScale = Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height));
-              
-              g.transition().duration(750).attr("transform",
-                `translate(${width / 2}, ${height / 2}) scale(${zoomScale}) translate(${-((x0 + x1) / 2)}, ${-((y0 + y1) / 2)})`
-              );
+            tiltedMapContent.classList.add("active-tab-content");
+            injuryAnalysisContent.classList.remove("active-tab-content");
+        });
 
-              tooltip.style("font-size", `${12 * zoomScale}px`)
-                     .style("padding", `${5 * zoomScale}px`);
+        injuryAnalysisTab.addEventListener("click", () => {
+            injuryAnalysisTab.classList.add("active");
+            tiltedMapTab.classList.remove("active");
 
-              states.attr("fill", "#cccccc"); // Reset all states
-              d3.select(event.target).attr("fill", "#ffcc00"); // Highlight selected state
+            injuryAnalysisContent.classList.add("active-tab-content");
+            tiltedMapContent.classList.remove("active-tab-content");
+        });
 
-              zoomedState = d;
-            }
-          }
-
-          svg.on("click", reset);
-        })
-        .catch(error => console.error("Error loading GeoJSON file:", error));
-
-      function reset() {
-        g.transition().duration(750).attr("transform", "translate(0,0) scale(1)");
-        zoomedState = null;
-        
-        d3.selectAll("path").attr("fill", "#cccccc"); // Reset highlight
-        tooltip.style("font-size", "12px")
-               .style("padding", "5px");
-      }
-
-      function zoomed(event) {
-        g.attr("transform", event.transform);
-      }
-    }
-  </script>
+        // Load data for injury analysis map (example data)
+        d3.json("top_laser_colors.json").then(data => {
+            initInjuryMap(data);
+        });
+    </script>
 </body>
+
 </html>

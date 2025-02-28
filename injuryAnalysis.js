@@ -1,125 +1,135 @@
-// injuryAnalysis.js
+function initInjuryMap(data) {
+  const width = window.innerWidth;
+  const height = window.innerHeight - 400;  // Adjust the height to avoid cutting off the map
+  const svg = d3.select("#injury-analysis-map")
+                .attr("width", width)
+                .attr("height", height);
 
-// Initialize the injury analysis visualization
-function initInjuryAnalysis(data) {
-    // Log the data structure to inspect it
-    console.log(data);
-  
-    // Convert necessary fields to proper types
-    data.forEach(d => {
-      d.Count = +d.Count;  // Ensure that 'Count' is a number
-      d.Altitude = +d.Altitude;  // Ensure that 'Altitude' is a number
-      // 'Laser Color', 'Aircraft', 'State', and 'Injury' will be strings, so no conversion needed for those
-    });
-  
-    // Extract distinct values for filters
-    const laserColors = [...new Set(data.map(d => d['Laser Color']))];
-    const states = [...new Set(data.map(d => d['State']))];
-    const aircrafts = [...new Set(data.map(d => d['Aircraft']))];
-  
-    // Log the extracted values to ensure they are correct
-    console.log('Laser Colors:', laserColors);
-    console.log('States:', states);
-    console.log('Aircrafts:', aircrafts);
-  
-    const laserColorFilter = d3.select("#laser-color-filter");
-    const stateFilter = d3.select("#state-filter");
-    const aircraftFilter = d3.select("#aircraft-filter");
-  
-    // Populate the laser color filter dropdown
-    laserColorFilter.selectAll("option")
-      .data(laserColors)
-      .enter()
-      .append("option")
-      .text(d => d)
-      .attr("value", d => d);
-  
-    // Populate the state filter dropdown
-    stateFilter.selectAll("option")
-      .data(states)
-      .enter()
-      .append("option")
-      .text(d => d)
-      .attr("value", d => d);
-  
-    // Populate the aircraft filter dropdown
-    aircraftFilter.selectAll("option")
-      .data(aircrafts)
-      .enter()
-      .append("option")
-      .text(d => d)
-      .attr("value", d => d);
-  
-    // Initial render with default values
-    updateVisualization(data, laserColors[0], states[0], aircrafts[0]);
-  
-    // Add event listeners to filters
-    laserColorFilter.on("change", function() {
-      updateVisualization(data, this.value, stateFilter.property("value"), aircraftFilter.property("value"));
-    });
-  
-    stateFilter.on("change", function() {
-      updateVisualization(data, laserColorFilter.property("value"), this.value, aircraftFilter.property("value"));
-    });
-  
-    aircraftFilter.on("change", function() {
-      updateVisualization(data, laserColorFilter.property("value"), stateFilter.property("value"), this.value);
-    });
+  const g = svg.append("g");
+  const tooltip = d3.select("#tooltip");
+  const infoContainer = d3.select("#state-info-container");  // Info container to show more details
+
+  const projection = d3.geoAlbersUsa()
+                       .translate([width / 2, height / 2])
+                       .scale(1000);
+
+  const path = d3.geoPath().projection(projection);
+
+  const laserColorFilter = d3.select("#laser-color-filter");
+  const aircraftFilter = d3.select("#aircraft-filter");
+  const stateFilter = d3.select("#state-filter");
+
+  const laserColors = [...new Set(data.map(d => d["Laser Color"]))].filter(Boolean);
+  const aircraftTypes = [...new Set(data.map(d => d["Aircraft"]))].filter(Boolean);
+  const states = [...new Set(data.map(d => d["State"]))].filter(Boolean);
+
+  // Populate dropdowns
+  laserColorFilter.selectAll("option").data(["All", ...laserColors]).enter().append("option").text(d => d);
+  aircraftFilter.selectAll("option").data(["All", ...aircraftTypes]).enter().append("option").text(d => d);
+  stateFilter.selectAll("option").data(["All", ...states]).enter().append("option").text(d => d);
+
+  // Convert Incident Date from serial date to JavaScript Date object
+  function convertExcelDate(serial) {
+      const epoch = new Date(1899, 11, 30); // Excel's epoch
+      return new Date((serial - 25569) * 86400 * 1000);
   }
-  
-  // Update the visualization based on selected filters
-  function updateVisualization(data, laserColor, state, aircraft) {
-    // Filter the data based on the selected filter values
-    const filteredData = data.filter(d => 
-      (laserColor === "All" || d['Laser Color'] === laserColor) && 
-      (state === "All" || d['State'] === state) && 
-      (aircraft === "All" || d['Aircraft'] === aircraft)
-    );
-  
-    // Group by injury type (if we have an "Injury" field)
-    const injuryCounts = d3.group(filteredData, d => d.Injury);
-    const barData = Array.from(injuryCounts, ([key, value]) => ({ Injury: key, Count: value.length }));
-  
-    // Bar chart visualization
-    const barSvg = d3.select("#bar-chart").html("").append("svg")
-      .attr("width", 500)
-      .attr("height", 300);
-  
-    const xScale = d3.scaleBand()
-      .domain(barData.map(d => d.Injury))
-      .range([50, 450])
-      .padding(0.1);
-  
-    const yScale = d3.scaleLinear()
-      .domain([0, d3.max(barData, d => d.Count)])
-      .range([250, 50]);
-  
-    barSvg.selectAll("rect")
-      .data(barData)
-      .enter()
-      .append("rect")
-      .attr("x", d => xScale(d.Injury))
-      .attr("y", d => yScale(d.Count))
-      .attr("width", xScale.bandwidth())
-      .attr("height", d => 250 - yScale(d.Count))
-      .attr("fill", "steelblue");
-  
-    // Pie chart visualization
-    const pieSvg = d3.select("#pie-chart").html("").append("svg")
-      .attr("width", 300)
-      .attr("height", 300);
-  
-    const pie = d3.pie().value(d => d.Count);
-    const arc = d3.arc().innerRadius(0).outerRadius(150);
-  
-    const arcs = pieSvg.selectAll("arc")
-      .data(pie(barData))
-      .enter()
-      .append("g")
-      .attr("transform", "translate(150, 150)");
-  
-    arcs.append("path")
-      .attr("d", arc)
-      .attr("fill", (d, i) => d3.schemeCategory10[i]);
+
+  // Filter data based on selections
+  function filterData() {
+      const selectedColor = laserColorFilter.node().value;
+      const selectedAircraft = aircraftFilter.node().value;
+      const selectedState = stateFilter.node().value;
+
+      return data.filter(d => {
+          return (
+              (selectedColor === "All" || d["Laser Color"] === selectedColor) &&
+              (selectedAircraft === "All" || d["Aircraft"] === selectedAircraft) &&
+              (selectedState === "All" || d["State"] === selectedState)
+          );
+      });
   }
-  
+
+  // Update map based on filtered data
+  function updateMap() {
+      const filteredData = filterData();
+      const selectedColor = laserColorFilter.node().value;
+      const stateInjuryCounts = {};
+
+      filteredData.forEach(d => {
+          if (d.Injury && d.Injury.toLowerCase() !== "none") {
+              stateInjuryCounts[d.State] = (stateInjuryCounts[d.State] || 0) + 1;
+          }
+      });
+
+      // Load GeoJSON for US states map
+      d3.json("ne_110m_admin_1_states_provinces.json").then(geoData => {
+          g.selectAll("path").remove();
+
+          g.selectAll("path")
+           .data(geoData.features)
+           .enter()
+           .append("path")
+           .attr("d", path)
+           .attr("fill", d => {
+               const injuryCount = stateInjuryCounts[d.properties.name] || 0;
+               return injuryCount > 0 ? selectedColor : "#cccccc"; // Use selected color for injuries, gray for no injuries
+           })
+           .attr("stroke", "#333")
+           .on("mouseover", (event, d) => {
+               const injuryCount = stateInjuryCounts[d.properties.name] || 0;
+               tooltip.style("display", "block")
+                      .html(`${d.properties.name}`)
+                      .style("left", (event.pageX + 10) + "px")
+                      .style("top", (event.pageY + 10) + "px");
+           })
+           .on("mouseout", () => tooltip.style("display", "none"))
+           .on("click", (event, d) => showStateInfo(d.properties.name));
+      });
+  }
+
+  // Display detailed information when a state is clicked
+  function showStateInfo(stateName) {
+      const stateData = data.filter(d => d.State === stateName);
+      const injuryCount = stateData.filter(d => d.Injury && d.Injury.toLowerCase() !== "none").length;
+
+      // Populate state-specific info into the container
+      infoContainer.html(`
+          <h3>State: ${stateName}</h3>
+          <p>Number of injuries: ${injuryCount}</p>
+          <table>
+              <thead>
+                  <tr><th>Laser Color</th><th>Aircraft</th><th>Altitude</th><th>City</th><th>Injury</th><th>Flight ID</th></tr>
+              </thead>
+              <tbody>
+                  ${stateData.map(d => `
+                      <tr>
+                          <td>${d["Laser Color"]}</td>
+                          <td>${d["Aircraft"]}</td>
+                          <td>${d["Altitude"]}</td>
+                          <td>${d["City"]}</td>
+                          <td>${d["Injury"]}</td>
+                          <td>${d["Flight ID"]}</td>
+                      </tr>
+                  `).join('')}
+              </tbody>
+          </table>
+      `);
+      infoContainer.style("display", "block");
+  }
+
+  // Event listeners for filters
+  laserColorFilter.on("change", updateMap);
+  aircraftFilter.on("change", updateMap);
+  stateFilter.on("change", updateMap);
+
+  updateMap();
+
+  // Zoom and Pan functionality
+  const zoom = d3.zoom()
+                 .scaleExtent([1, 8]) // Set zoom in/out limits
+                 .on("zoom", (event) => {
+                     g.attr("transform", event.transform);
+                 });
+
+  svg.call(zoom);
+}
