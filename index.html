@@ -43,10 +43,19 @@
 
         #filters {
             margin: 20px 0;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
         #filters label {
-            margin-right: 10px;
+            margin-right: 5px;
+            font-weight: bold;
+        }
+
+        #filters select, #filters input {
+            padding: 5px;
+            font-size: 14px;
         }
 
         #injury-analysis-map {
@@ -61,6 +70,7 @@
             color: white;
             padding: 5px;
             display: none;
+            pointer-events: none;
         }
 
         #state-info-container {
@@ -68,6 +78,22 @@
             border: 1px solid #ccc;
             margin-top: 20px;
             display: none;
+            background: #f9f9f9;
+        }
+
+        #reset-zoom {
+            margin-top: 10px;
+            padding: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #reset-zoom:hover {
+            background-color: #cc0000;
         }
     </style>
 </head>
@@ -105,6 +131,10 @@
             <select id="state-filter">
                 <option value="All">All</option>
             </select>
+
+            <label for="date-range">Year:</label>
+            <input type="range" id="date-range" min="2016" max="2024" value="2024">
+            <span id="date-range-value">2024</span>
         </div>
 
         <!-- SVG for Injury Map -->
@@ -127,6 +157,8 @@
         const injuryAnalysisTab = document.getElementById("injuryAnalysisTab");
         const tiltedMapContent = document.getElementById("tiltedMapContent");
         const injuryAnalysisContent = document.getElementById("injuryAnalysisContent");
+        const dateRangeSlider = document.getElementById("date-range");
+        const dateRangeValue = document.getElementById("date-range-value");
 
         tiltedMapTab.addEventListener("click", () => {
             tiltedMapTab.classList.add("active");
@@ -142,6 +174,11 @@
 
             injuryAnalysisContent.classList.add("active-tab-content");
             tiltedMapContent.classList.remove("active-tab-content");
+        });
+
+        // Update date range value
+        dateRangeSlider.addEventListener("input", () => {
+            dateRangeValue.textContent = dateRangeSlider.value;
         });
 
         // Load data for injury analysis map (example data)
