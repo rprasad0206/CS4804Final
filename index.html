@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Laser Incident Visualizations</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="injuryAnalysis.js" defer></script> <!-- Link to external injury analysis JS -->
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -93,8 +94,8 @@
 
     <!-- Filters -->
     <div class="filter">
-      <label for="year-filter">Select Year:</label>
-      <select id="year-filter"></select>
+      <label for="laser-color-filter">Select Laser Color:</label>
+      <select id="laser-color-filter"></select>
 
       <label for="state-filter">Select State:</label>
       <select id="state-filter"></select>
@@ -123,8 +124,17 @@
       document.getElementById(tabId).classList.add('active');
     }
 
+    // Load the data from the JSON file
+    d3.json("top_laser_colors.json").then(data => {
+      // Initialize the map and injury analysis
+      initMap(data);
+      initInjuryAnalysis(data);
+    }).catch(error => {
+      console.error("Error loading data:", error);
+    });
+
     // Initialize the map visualization
-    function initMap() {
+    function initMap(data) {
       const width = window.innerWidth;
       const height = window.innerHeight;
       let zoomedState = null;
@@ -144,9 +154,9 @@
       const path = d3.geoPath().projection(projection);
 
       d3.json("ne_110m_admin_1_states_provinces.json")
-        .then(data => {
+        .then(geoData => {
           const states = g.selectAll("path")
-            .data(data.features)
+            .data(geoData.features)
             .enter()
             .append("path")
             .attr("d", path)
@@ -183,7 +193,7 @@
 
               tooltip.style("font-size", `${12 * zoomScale}px`)
                      .style("padding", `${5 * zoomScale}px`);
-              
+
               states.attr("fill", "#cccccc"); // Reset all states
               d3.select(event.target).attr("fill", "#ffcc00"); // Highlight selected state
 
@@ -208,145 +218,6 @@
         g.attr("transform", event.transform);
       }
     }
-
-    // Initialize the injury analysis visualization
-    function initInjuryAnalysis() {
-      // Load data from combined_output.json
-      d3.json("combined_output.json").then(data => {
-        console.log("Data loaded:", data); // Check if data is loaded
-        // Convert numeric fields if needed
-        data.forEach(d => {
-          d.Altitude = +d.Altitude;
-          d.Year = +d.Year;
-        });
-
-        // Initialize filters
-        const years = [...new Set(data.map(d => d.Year))];
-        const states = [...new Set(data.map(d => d.State))];
-        const aircrafts = [...new Set(data.map(d => d.Aircraft))];
-
-        console.log("Years:", years); // Check if years are extracted
-        console.log("States:", states); // Check if states are extracted
-        console.log("Aircrafts:", aircrafts); // Check if aircrafts are extracted
-
-        const yearFilter = d3.select("#year-filter");
-        const stateFilter = d3.select("#state-filter");
-        const aircraftFilter = d3.select("#aircraft-filter");
-
-        yearFilter.selectAll("option")
-          .data(years)
-          .enter()
-          .append("option")
-          .text(d => d)
-          .attr("value", d => d);
-
-        stateFilter.selectAll("option")
-          .data(states)
-          .enter()
-          .append("option")
-          .text(d => d)
-          .attr("value", d => d);
-
-        aircraftFilter.selectAll("option")
-          .data(aircrafts)
-          .enter()
-          .append("option")
-          .text(d => d)
-          .attr("value", d => d);
-
-        // Initial render
-        updateVisualization(data, years[0], states[0], aircrafts[0]);
-
-        // Add event listeners to filters
-        yearFilter.on("change", function() {
-          updateVisualization(data, this.value, stateFilter.property("value"), aircraftFilter.property("value"));
-        });
-
-        stateFilter.on("change", function() {
-          updateVisualization(data, yearFilter.property("value"), this.value, aircraftFilter.property("value"));
-        });
-
-        aircraftFilter.on("change", function() {
-          updateVisualization(data, yearFilter.property("value"), stateFilter.property("value"), this.value);
-        });
-      }).catch(error => {
-        console.error("Error loading data:", error); // Check for errors
-      });
-
-      // Update visualization based on filters
-      function updateVisualization(data, year, state, aircraft) {
-        const filteredData = data.filter(d => d.Year == year && d.State === state && d.Aircraft === aircraft);
-
-        // Grouped bar chart
-        const injuryCounts = d3.group(filteredData, d => d.Injury);
-        const barData = Array.from(injuryCounts, ([key, value]) => ({ Injury: key, Count: value.length }));
-
-        const barSvg = d3.select("#bar-chart").html("").append("svg")
-          .attr("width", 500)
-          .attr("height", 300);
-
-        const xScale = d3.scaleBand()
-          .domain(barData.map(d => d.Injury))
-          .range([50, 450])
-          .padding(0.1);
-
-        const yScale = d3.scaleLinear()
-          .domain([0, d3.max(barData, d => d.Count)])
-          .range([250, 50]);
-
-        barSvg.selectAll("rect")
-          .data(barData)
-          .enter()
-          .append("rect")
-          .attr("x", d => xScale(d.Injury))
-          .attr("y", d => yScale(d.Count))
-          .attr("width", xScale.bandwidth())
-          .attr("height", d => 250 - yScale(d.Count))
-          .attr("fill", "steelblue")
-          .on("mouseover", (event, d) => {
-            d3.select("#injury-tooltip")
-              .style("opacity", 1)
-              .html(`Injury: ${d.Injury}<br>Count: ${d.Count}`)
-              .style("left", `${event.pageX + 5}px`)
-              .style("top", `${event.pageY - 20}px`);
-          })
-          .on("mouseout", () => {
-            d3.select("#injury-tooltip").style("opacity", 0);
-          });
-
-        // Pie chart
-        const pieSvg = d3.select("#pie-chart").html("").append("svg")
-          .attr("width", 300)
-          .attr("height", 300);
-
-        const pie = d3.pie().value(d => d.Count);
-        const arc = d3.arc().innerRadius(0).outerRadius(150);
-
-        const arcs = pieSvg.selectAll("arc")
-          .data(pie(barData))
-          .enter()
-          .append("g")
-          .attr("transform", "translate(150, 150)");
-
-        arcs.append("path")
-          .attr("d", arc)
-          .attr("fill", (d, i) => d3.schemeCategory10[i])
-          .on("mouseover", (event, d) => {
-            d3.select("#injury-tooltip")
-              .style("opacity", 1)
-              .html(`Injury: ${d.data.Injury}<br>Count: ${d.data.Count}`)
-              .style("left", `${event.pageX + 5}px`)
-              .style("top", `${event.pageY - 20}px`);
-          })
-          .on("mouseout", () => {
-            d3.select("#injury-tooltip").style("opacity", 0);
-          });
-      }
-    }
-
-    // Initialize both visualizations
-    initInjuryAnalysis();
-    initMap();
   </script>
 </body>
 </html>
