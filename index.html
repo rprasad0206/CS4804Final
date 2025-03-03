@@ -28,6 +28,14 @@
           <option value="time_bar">Incidents Over Time</option>
         </select>
       </div>
+      <div class="col-md-4">
+        <label for="year-slider">Select Year:</label>
+        <input type="range" id="year-slider" min="2016" max="2024" value="2024" class="form-range">
+        <span id="year-display">Selected Year: 2024</span>
+      </div>
+      <div class="col-md-4">
+        <button id="show-all-years" class="btn btn-primary">Show All Years</button>
+      </div>
     </div>
     <div class="row mt-4">
       <div class="col-md-12">
@@ -91,10 +99,17 @@
       console.log("Data loaded and processed:", data);
     }
 
+    // Filter data by year
+    function filterDataByYear(data, year) {
+      if (year === "All") return data;
+      return data.filter((d) => new Date(d["\u00ef\u00bb\u00bfIncident Date"]).getFullYear() === year);
+    }
+
     // Visualization 1: Top 5 Laser Colors
-    function plotTopLaserColors() {
+    function plotTopLaserColors(year = "All") {
+      const filteredData = filterDataByYear(data, year);
       const colorCounts = d3.rollup(
-        data,
+        filteredData,
         (v) => v.length,
         (d) => d["Laser Color"]
       );
@@ -111,7 +126,7 @@
       };
 
       const layout = {
-        title: "Top 5 Most Common Laser Colors",
+        title: `Top 5 Most Common Laser Colors (${year === "All" ? "All Years" : year})`,
         xaxis: { title: "Laser Color" },
         yaxis: { title: "Number of Incidents" },
       };
@@ -120,9 +135,10 @@
     }
 
     // Visualization 2: Incidents by State (Choropleth Map)
-    function plotIncidentsByState() {
+    function plotIncidentsByState(year = "All") {
+      const filteredData = filterDataByYear(data, year);
       const stateCounts = d3.rollup(
-        data,
+        filteredData,
         (v) => v.length,
         (d) => d["State Abbr"]
       );
@@ -136,7 +152,7 @@
       };
 
       const layout = {
-        title: "Laser Incidents by State",
+        title: `Laser Incidents by State (${year === "All" ? "All Years" : year})`,
         geo: { scope: "usa" },
       };
 
@@ -144,9 +160,10 @@
     }
 
     // Visualization 3: Incidents Over Time (Bar Chart)
-    function plotIncidentsOverTime() {
+    function plotIncidentsOverTime(year = "All") {
+      const filteredData = filterDataByYear(data, year);
       const hourCounts = d3.rollup(
-        data,
+        filteredData,
         (v) => v.length,
         (d) => Math.floor(d["Incident Time"])
       );
@@ -162,7 +179,7 @@
       };
 
       const layout = {
-        title: "Laser Incidents by Hour of the Day",
+        title: `Laser Incidents by Hour of the Day (${year === "All" ? "All Years" : year})`,
         xaxis: { title: "Hour of the Day" },
         yaxis: { title: "Number of Incidents" },
       };
@@ -184,24 +201,48 @@
     // Handle dropdown change
     document.getElementById("visualization-dropdown").addEventListener("change", (event) => {
       const selectedVisualization = event.target.value;
-      switch (selectedVisualization) {
+      const selectedYear = document.getElementById("year-slider").value;
+      updateVisualization(selectedVisualization, selectedYear);
+    });
+
+    // Handle year slider change
+    document.getElementById("year-slider").addEventListener("input", (event) => {
+      const selectedYear = parseInt(event.target.value);
+      document.getElementById("year-display").textContent = `Selected Year: ${selectedYear}`;
+      const selectedVisualization = document.getElementById("visualization-dropdown").value;
+      updateVisualization(selectedVisualization, selectedYear);
+    });
+
+    // Handle "Show All Years" button click
+    document.getElementById("show-all-years").addEventListener("click", () => {
+      document.getElementById("year-slider").value = 2024; // Reset slider
+      document.getElementById("year-display").textContent = "Selected Year: All";
+      const selectedVisualization = document.getElementById("visualization-dropdown").value;
+      updateVisualization(selectedVisualization, "All");
+    });
+
+    // Update visualization based on selected type and year
+    function updateVisualization(visualization, year) {
+      switch (visualization) {
         case "top_colors":
-          plotTopLaserColors();
+          plotTopLaserColors(year);
           break;
         case "state_map":
-          plotIncidentsByState();
+          plotIncidentsByState(year);
           break;
         case "time_bar":
-          plotIncidentsOverTime();
+          plotIncidentsOverTime(year);
           break;
         default:
           Plotly.purge("chart");
       }
-    });
+    }
 
     // Initialize
     loadData().then(() => {
       plotTopLaserColors(); // Default visualization
+      document.getElementById("year-slider").value = 2024;
+      document.getElementById("year-display").textContent = "Selected Year: 2024";
     });
   </script>
 </body>
