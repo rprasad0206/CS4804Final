@@ -160,7 +160,7 @@
         d["Altitude"] = +d["Altitude"];
         d["State"] = d["State"].trim();
         d["Laser Color"] = d["Laser Color"].trim();
-        d["Aircraft"] = d["Aircraft"] ? d["Aircraft"].trim() : "Unknown"; // Ensure aircraft type is included
+        d["Aircraft"] = d["Aircraft"].trim(); // Ensure aircraft type is included
         d["State Abbr"] = stateAbbrMap[d["State"]] || null; // Convert state names to abbreviations
       });
 
@@ -175,17 +175,14 @@
 
     // Populate filters
     function populateFilters() {
-      // Get unique laser colors, aircraft types, and states
-      const laserColors = [...new Set(data.map(d => d["Laser Color"]).filter(Boolean))];
-      const aircraftTypes = [...new Set(data.map(d => d["Aircraft"]).filter(Boolean))];
-      const states = [...new Set(data.map(d => d["State"]).filter(Boolean))];
+      const laserColors = [...new Set(data.map(d => d["Laser Color"]))];
+      const aircraftTypes = [...new Set(data.map(d => d["Aircraft"]))];
+      const states = [...new Set(data.map(d => d["State"]))];
 
-      // Get filter elements
       const laserColorFilter = document.getElementById("laser-color-filter");
       const aircraftFilter = document.getElementById("aircraft-filter");
       const stateFilter = document.getElementById("state-filter");
 
-      // Populate Laser Color Filter
       laserColors.forEach(color => {
         const option = document.createElement("option");
         option.value = color;
@@ -193,23 +190,13 @@
         laserColorFilter.appendChild(option);
       });
 
-      // Populate Aircraft Filter
-      if (aircraftTypes.length > 0) {
-        aircraftTypes.forEach(type => {
-          const option = document.createElement("option");
-          option.value = type;
-          option.textContent = type;
-          aircraftFilter.appendChild(option);
-        });
-      } else {
-        console.warn("No aircraft types found in the data.");
+      aircraftTypes.forEach(type => {
         const option = document.createElement("option");
-        option.value = "Unknown";
-        option.textContent = "Unknown";
+        option.value = type;
+        option.textContent = type;
         aircraftFilter.appendChild(option);
-      }
+      });
 
-      // Populate State Filter
       states.forEach(state => {
         const option = document.createElement("option");
         option.value = state;
