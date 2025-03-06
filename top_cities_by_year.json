@@ -1,0 +1,380 @@
+{
+    "2021": [
+        {
+            "city": "SAN DIEGO",
+            "count": 453
+        },
+        {
+            "city": "MATHER",
+            "count": 375
+        },
+        {
+            "city": "MEMPHIS",
+            "count": 316
+        },
+        {
+            "city": "INDIANAPOLIS",
+            "count": 298
+        },
+        {
+            "city": "SALT LAKE CITY",
+            "count": 268
+        },
+        {
+            "city": "HOUSTON",
+            "count": 249
+        },
+        {
+            "city": "PHOENIX",
+            "count": 235
+        },
+        {
+            "city": "HAMPTON",
+            "count": 219
+        },
+        {
+            "city": "ALBUQUERQUE",
+            "count": 194
+        },
+        {
+            "city": "PORTLAND",
+            "count": 189
+        }
+    ],
+    "2023": [
+        {
+            "city": "MATHER",
+            "count": 566
+        },
+        {
+            "city": "INDIANAPOLIS",
+            "count": 562
+        },
+        {
+            "city": "HOUSTON",
+            "count": 473
+        },
+        {
+            "city": "ALBUQUERQUE",
+            "count": 406
+        },
+        {
+            "city": "MEMPHIS",
+            "count": 394
+        },
+        {
+            "city": "PHOENIX",
+            "count": 368
+        },
+        {
+            "city": "HAMPTON",
+            "count": 311
+        },
+        {
+            "city": "SAN DIEGO",
+            "count": 305
+        },
+        {
+            "city": "AUBURN",
+            "count": 241
+        },
+        {
+            "city": "PORTLAND",
+            "count": 234
+        }
+    ],
+    "2024": [
+        {
+            "city": "HOUSTON",
+            "count": 543
+        },
+        {
+            "city": "MATHER",
+            "count": 420
+        },
+        {
+            "city": "MEMPHIS",
+            "count": 410
+        },
+        {
+            "city": "INDIANAPOLIS",
+            "count": 379
+        },
+        {
+            "city": "PHOENIX",
+            "count": 366
+        },
+        {
+            "city": "ELGIN",
+            "count": 331
+        },
+        {
+            "city": "SAN DIEGO",
+            "count": 309
+        },
+        {
+            "city": "ALBUQUERQUE",
+            "count": 303
+        },
+        {
+            "city": "DENVER",
+            "count": 286
+        },
+        {
+            "city": "FORT WORTH",
+            "count": 252
+        }
+    ],
+    "2018": [
+        {
+            "city": "HOUSTON",
+            "count": 181
+        },
+        {
+            "city": "LOS ANGELES",
+            "count": 156
+        },
+        {
+            "city": "PHOENIX",
+            "count": 139
+        },
+        {
+            "city": "SALT LAKE CITY",
+            "count": 124
+        },
+        {
+            "city": "SAN JUAN",
+            "count": 120
+        },
+        {
+            "city": "SAN DIEGO",
+            "count": 113
+        },
+        {
+            "city": "SEATTLE",
+            "count": 103
+        },
+        {
+            "city": "NEW YORK",
+            "count": 99
+        },
+        {
+            "city": "PORTLAND",
+            "count": 97
+        },
+        {
+            "city": "DENVER",
+            "count": 94
+        }
+    ],
+    "2019": [
+        {
+            "city": "PHOENIX",
+            "count": 187
+        },
+        {
+            "city": "LOS ANGELES",
+            "count": 123
+        },
+        {
+            "city": "PORTLAND",
+            "count": 120
+        },
+        {
+            "city": "CHICAGO",
+            "count": 118
+        },
+        {
+            "city": "HOUSTON",
+            "count": 116
+        },
+        {
+            "city": "DENVER",
+            "count": 116
+        },
+        {
+            "city": "SALT LAKE CITY",
+            "count": 109
+        },
+        {
+            "city": "SAN JOSE",
+            "count": 102
+        },
+        {
+            "city": "EL PASO",
+            "count": 98
+        },
+        {
+            "city": "SEATTLE",
+            "count": 96
+        }
+    ],
+    "2020": [
+        {
+            "city": "PHOENIX",
+            "count": 202
+        },
+        {
+            "city": "DENVER",
+            "count": 162
+        },
+        {
+            "city": "LAS VEGAS",
+            "count": 157
+        },
+        {
+            "city": "LOS ANGELES",
+            "count": 128
+        },
+        {
+            "city": "EL PASO",
+            "count": 123
+        },
+        {
+            "city": "HOUSTON",
+            "count": 120
+        },
+        {
+            "city": "PORTLAND",
+            "count": 114
+        },
+        {
+            "city": "INDIANAPOLIS",
+            "count": 101
+        },
+        {
+            "city": "MIAMI",
+            "count": 95
+        },
+        {
+            "city": "CHICAGO",
+            "count": 92
+        }
+    ],
+    "2022": [
+        {
+            "city": "MATHER",
+            "count": 442
+        },
+        {
+            "city": "HOUSTON",
+            "count": 360
+        },
+        {
+            "city": "SAN DIEGO",
+            "count": 341
+        },
+        {
+            "city": "MEMPHIS",
+            "count": 311
+        },
+        {
+            "city": "INDIANAPOLIS",
+            "count": 305
+        },
+        {
+            "city": "PHOENIX",
+            "count": 236
+        },
+        {
+            "city": "HAMPTON",
+            "count": 209
+        },
+        {
+            "city": "SALT LAKE CITY",
+            "count": 173
+        },
+        {
+            "city": "PORTLAND",
+            "count": 171
+        },
+        {
+            "city": "DENVER",
+            "count": 164
+        }
+    ],
+    "2016": [
+        {
+            "city": "PHOENIX",
+            "count": 309
+        },
+        {
+            "city": "LOS ANGELES",
+            "count": 211
+        },
+        {
+            "city": "SAN JUAN",
+            "count": 199
+        },
+        {
+            "city": "HOUSTON",
+            "count": 176
+        },
+        {
+            "city": "LAS VEGAS",
+            "count": 162
+        },
+        {
+            "city": "ATLANTA",
+            "count": 142
+        },
+        {
+            "city": "SAN DIEGO",
+            "count": 136
+        },
+        {
+            "city": "CHICAGO",
+            "count": 132
+        },
+        {
+            "city": "DENVER",
+            "count": 124
+        },
+        {
+            "city": "SEATTLE",
+            "count": 117
+        }
+    ],
+    "2017": [
+        {
+            "city": "LOS ANGELES",
+            "count": 197
+        },
+        {
+            "city": "SAN JUAN",
+            "count": 189
+        },
+        {
+            "city": "PHOENIX",
+            "count": 175
+        },
+        {
+            "city": "HOUSTON",
+            "count": 156
+        },
+        {
+            "city": "DENVER",
+            "count": 150
+        },
+        {
+            "city": "LAS VEGAS",
+            "count": 122
+        },
+        {
+            "city": "CHICAGO",
+            "count": 117
+        },
+        {
+            "city": "SALT LAKE CITY",
+            "count": 114
+        },
+        {
+            "city": "SAN JOSE",
+            "count": 114
+        },
+        {
+            "city": "SAN DIEGO",
+            "count": 103
+        }
+    ]
+}

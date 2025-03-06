@@ -1,35 +1,40 @@
-// Visualization 5: Incidents by City (Pie Chart)
 function plotIncidentsByCity(year = "All") {
-    const filteredData = filterDataByYear(data, year);
-    const cityCounts = d3.rollup(
-      filteredData,
-      (v) => v.length,
-      (d) => d["City"]
-    );
+    // Fetch the data from the JSON file
+    fetch("top_cities_by_year.json")
+      .then((response) => response.json())
+      .then((data) => {
+        // Get the data for the selected year
+        const yearData = year === "All" ? Object.values(data).flat() : data[year];
   
-    // Sort the cities by the number of incidents and get the top 10
-    const cityData = Array.from(cityCounts)
-      .sort((a, b) => b[1] - a[1]) // Sort descending by incident count
-      .slice(0, 10) // Get top 10
-      .map(([city, count]) => ({
-        label: city,
-        value: count
-      }));
+        // Sort the cities by count in descending order and take the top 10
+        const topCities = yearData
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 10);
   
-    const trace = {
-      labels: cityData.map((d) => d.label),
-      values: cityData.map((d) => d.value),
-      type: "pie",
-      textinfo: "label+percent", // Show label and percentage
-      marker: {
-        colors: cityData.map((d, index) => d3.schemeCategory10[index % 10]), // Color scheme
-      }
-    };
+        // Prepare data for the pie chart
+        const labels = topCities.map((d) => d.city);
+        const values = topCities.map((d) => d.count);
   
-    const layout = {
-      title: `Laser Incidents by City (${year === "All" ? "All Years" : year})`,
-    };
+        // Create the pie chart trace
+        const trace = {
+          labels: labels,
+          values: values,
+          type: "pie",
+          textinfo: "label+percent", // Show label and percentage
+          marker: {
+            colors: labels.map((_, index) => d3.schemeCategory10[index % 10]), // Color scheme
+          },
+        };
   
-    Plotly.newPlot("chart", [trace], layout);
+        // Define the layout
+        const layout = {
+          title: `Top 10 Cities by Laser Incidents (${year === "All" ? "All Years" : year})`,
+        };
+  
+        // Plot the chart
+        Plotly.newPlot("chart", [trace], layout);
+      })
+      .catch((error) => {
+        console.error("Error loading or processing data:", error);
+      });
   }
-  

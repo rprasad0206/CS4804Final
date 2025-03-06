@@ -242,36 +242,46 @@
       Plotly.newPlot("chart", [trace], layout);
     }
 
-
-    // Visualization 5: Incidents by City (Pie Chart)
+    // Visualization 6: Incidents by City (Pie Chart)
     function plotIncidentsByCity(year = "All") {
-      const filteredData = filterDataByYear(data, year);
-      const cityCounts = d3.rollup(
-        filteredData,
-        (v) => v.length,
-        (d) => d["City"]
-      );
+      // Fetch the data from the JSON file
+      fetch("top_cities_by_year.json")
+        .then((response) => response.json())
+        .then((data) => {
+          // Get the data for the selected year
+          const yearData = year === "All" ? Object.values(data).flat() : data[year];
 
-      const cityData = Array.from(cityCounts).map(([city, count]) => ({
-        label: city,
-        value: count
-      }));
+          // Sort the cities by count in descending order and take the top 10
+          const topCities = yearData
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 10);
 
-      const trace = {
-        labels: cityData.map((d) => d.label),
-        values: cityData.map((d) => d.value),
-        type: "pie",
-        textinfo: "label+percent", // Show label and percentage
-        marker: {
-          colors: cityData.map((d, index) => d3.schemeCategory10[index % 10]), // Color scheme
-        }
-      };
+          // Prepare data for the pie chart
+          const labels = topCities.map((d) => d.city);
+          const values = topCities.map((d) => d.count);
 
-      const layout = {
-        title: `Laser Incidents by City (${year === "All" ? "All Years" : year})`,
-      };
+          // Create the pie chart trace
+          const trace = {
+            labels: labels,
+            values: values,
+            type: "pie",
+            textinfo: "label+percent", // Show label and percentage
+            marker: {
+              colors: labels.map((_, index) => d3.schemeCategory10[index % 10]), // Color scheme
+            },
+          };
 
-      Plotly.newPlot("chart", [trace], layout);
+          // Define the layout
+          const layout = {
+            title: `Top 10 Cities by Laser Incidents (${year === "All" ? "All Years" : year})`,
+          };
+
+          // Plot the chart
+          Plotly.newPlot("chart", [trace], layout);
+        })
+        .catch((error) => {
+          console.error("Error loading or processing data:", error);
+        });
     }
 
     // Color mapping for laser colors
@@ -300,18 +310,9 @@
       updateVisualization(selectedVisualization, selectedYear);
     });
 
-    // Handle show all years button
-    document.getElementById("show-all-years").addEventListener("click", () => {
-      const selectedYear = "All";
-      document.getElementById("year-slider").value = "2024";
-      document.getElementById("year-display").textContent = "Selected Year: All";
-      const selectedVisualization = document.getElementById("visualization-dropdown").value;
-      updateVisualization(selectedVisualization, selectedYear);
-    });
-
     // Update the selected visualization
-    function updateVisualization(visualization, year) {
-      switch (visualization) {
+    function updateVisualization(visualizationType, year) {
+      switch (visualizationType) {
         case "top_colors":
           plotTopLaserColors(year);
           break;
@@ -324,20 +325,28 @@
         case "altitude_histogram":
           plotIncidentsByAltitude(year);
           break;
-        case "aircraft_histogram": // New case for Aircraft
+        case "aircraft_histogram":
           plotIncidentsByAircraft(year);
           break;
         case "city_pie":
           plotIncidentsByCity(year);
           break;
         default:
-          Plotly.purge("chart");
+          console.error("Unknown visualization type:", visualizationType);
       }
     }
 
-    // Initialize data and plot default chart
+    // Show all years when the button is clicked
+    document.getElementById("show-all-years").addEventListener("click", () => {
+      document.getElementById("year-slider").value = "All";
+      document.getElementById("year-display").textContent = `Selected Year: All`;
+      const selectedVisualization = document.getElementById("visualization-dropdown").value;
+      updateVisualization(selectedVisualization, "All");
+    });
+
+    // Initialize the app
     loadData().then(() => {
-      updateVisualization("top_colors", "All");
+      updateVisualization("top_colors", "All"); // Default visualization
     });
   </script>
 </body>
