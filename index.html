@@ -221,26 +221,47 @@
       Plotly.newPlot("chart", [trace], layout);
     }
 
-    // Visualization 5: Incidents by Aircraft (Histogram)
-    function plotIncidentsByAircraft(year = "All") {
-      const filteredData = filterDataByYear(data, year);
-      const aircraftTypes = filteredData.map((d) => d["Aircraft"]);
+     // Function to plot incidents by aircraft
+     function plotIncidentsByAircraft(year = "All") {
+            // Filter the data by the selected year
+            const filteredData = filterDataByYear(data, year);
 
-      const trace = {
-        x: aircraftTypes,
-        type: "histogram",
-        marker: { color: "lightgreen" },
-        opacity: 0.7,
-      };
+            // Create a count of incidents by aircraft type
+            const aircraftCounts = d3.rollup(
+                filteredData,
+                (v) => v.length,  // Count the incidents for each aircraft type
+                (d) => d["Aircraft"] // Group by the aircraft type
+            );
 
-      const layout = {
-        title: `Distribution of Laser Incidents by Aircraft (${year === "All" ? "All Years" : year})`,
-        xaxis: { title: "Aircraft Type" },
-        yaxis: { title: "Number of Incidents" },
-      };
+            // Sort aircraft by the number of incidents in descending order
+            const sortedAircraft = Array.from(aircraftCounts)
+                .sort((a, b) => b[1] - a[1])  // Sort by incident count
+                .slice(0, 10); // Get the top 10 aircraft
 
-      Plotly.newPlot("chart", [trace], layout);
-    }
+            // Prepare the data for the histogram (Top 10 Aircraft)
+            const aircraftTypes = sortedAircraft.map((d) => d[0]);
+            const incidentCounts = sortedAircraft.map((d) => d[1]);
+
+            // Create the histogram trace
+            const trace = {
+                x: aircraftTypes,
+                y: incidentCounts,
+                type: "bar",
+                marker: { color: "lightgreen" },
+                opacity: 0.7,
+            };
+
+            // Define the layout for the chart
+            const layout = {
+                title: `Top 10 Aircraft by Laser Incidents (${year === "All" ? "All Years" : year})`,
+                xaxis: { title: "Aircraft Type" },
+                yaxis: { title: "Number of Incidents" },
+                bargap: 0.2, // Space between bars
+            };
+
+            // Plot the histogram chart
+            Plotly.newPlot("chart", [trace], layout);
+        }
 
     // Visualization 6: Incidents by City (Pie Chart)
     function plotIncidentsByCity(year = "All") {

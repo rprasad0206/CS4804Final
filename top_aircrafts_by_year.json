@@ -1,0 +1,380 @@
+{
+    "2021": [
+        {
+            "aircraft": "C172",
+            "count": 782
+        },
+        {
+            "aircraft": "B737",
+            "count": 709
+        },
+        {
+            "aircraft": "B738",
+            "count": 625
+        },
+        {
+            "aircraft": "E75L",
+            "count": 618
+        },
+        {
+            "aircraft": "A320",
+            "count": 295
+        },
+        {
+            "aircraft": "B763",
+            "count": 275
+        },
+        {
+            "aircraft": "B739",
+            "count": 271
+        },
+        {
+            "aircraft": "A321",
+            "count": 258
+        },
+        {
+            "aircraft": "HELO",
+            "count": 246
+        },
+        {
+            "aircraft": "CRJ2",
+            "count": 245
+        }
+    ],
+    "2023": [
+        {
+            "aircraft": "C172",
+            "count": 1375
+        },
+        {
+            "aircraft": "B737",
+            "count": 1085
+        },
+        {
+            "aircraft": "B738",
+            "count": 956
+        },
+        {
+            "aircraft": "E75L",
+            "count": 681
+        },
+        {
+            "aircraft": "B739",
+            "count": 501
+        },
+        {
+            "aircraft": "A321",
+            "count": 467
+        },
+        {
+            "aircraft": "P28A",
+            "count": 426
+        },
+        {
+            "aircraft": "A320",
+            "count": 404
+        },
+        {
+            "aircraft": "HELO",
+            "count": 356
+        },
+        {
+            "aircraft": "E170",
+            "count": 294
+        }
+    ],
+    "2024": [
+        {
+            "aircraft": "C172",
+            "count": 1285
+        },
+        {
+            "aircraft": "B737",
+            "count": 1022
+        },
+        {
+            "aircraft": "B738",
+            "count": 966
+        },
+        {
+            "aircraft": "E75L",
+            "count": 724
+        },
+        {
+            "aircraft": "B739",
+            "count": 466
+        },
+        {
+            "aircraft": "P28A",
+            "count": 442
+        },
+        {
+            "aircraft": "A321",
+            "count": 411
+        },
+        {
+            "aircraft": "E170",
+            "count": 384
+        },
+        {
+            "aircraft": "A320",
+            "count": 368
+        },
+        {
+            "aircraft": "B38M",
+            "count": 349
+        }
+    ],
+    "2018": [
+        {
+            "aircraft": "B737",
+            "count": 637
+        },
+        {
+            "aircraft": "C172",
+            "count": 345
+        },
+        {
+            "aircraft": "B738",
+            "count": 281
+        },
+        {
+            "aircraft": "A320",
+            "count": 219
+        },
+        {
+            "aircraft": "CRJ2",
+            "count": 202
+        },
+        {
+            "aircraft": "B739",
+            "count": 183
+        },
+        {
+            "aircraft": "HELO",
+            "count": 147
+        },
+        {
+            "aircraft": "E75L",
+            "count": 141
+        },
+        {
+            "aircraft": "E145",
+            "count": 141
+        },
+        {
+            "aircraft": "A321",
+            "count": 132
+        }
+    ],
+    "2019": [
+        {
+            "aircraft": "B737",
+            "count": 662
+        },
+        {
+            "aircraft": "C172",
+            "count": 445
+        },
+        {
+            "aircraft": "B738",
+            "count": 341
+        },
+        {
+            "aircraft": "A320",
+            "count": 237
+        },
+        {
+            "aircraft": "CRJ2",
+            "count": 225
+        },
+        {
+            "aircraft": "E75L",
+            "count": 222
+        },
+        {
+            "aircraft": "B739",
+            "count": 216
+        },
+        {
+            "aircraft": "E145",
+            "count": 188
+        },
+        {
+            "aircraft": "A321",
+            "count": 163
+        },
+        {
+            "aircraft": "HELO",
+            "count": 147
+        }
+    ],
+    "2020": [
+        {
+            "aircraft": "C172",
+            "count": 624
+        },
+        {
+            "aircraft": "B737",
+            "count": 567
+        },
+        {
+            "aircraft": "B738",
+            "count": 317
+        },
+        {
+            "aircraft": "E75L",
+            "count": 275
+        },
+        {
+            "aircraft": "HELO",
+            "count": 240
+        },
+        {
+            "aircraft": "A320",
+            "count": 221
+        },
+        {
+            "aircraft": "B763",
+            "count": 205
+        },
+        {
+            "aircraft": "P28A",
+            "count": 165
+        },
+        {
+            "aircraft": "PC12",
+            "count": 158
+        },
+        {
+            "aircraft": "B739",
+            "count": 154
+        }
+    ],
+    "2022": [
+        {
+            "aircraft": "C172",
+            "count": 825
+        },
+        {
+            "aircraft": "B737",
+            "count": 755
+        },
+        {
+            "aircraft": "B738",
+            "count": 739
+        },
+        {
+            "aircraft": "E75L",
+            "count": 447
+        },
+        {
+            "aircraft": "B739",
+            "count": 411
+        },
+        {
+            "aircraft": "A321",
+            "count": 341
+        },
+        {
+            "aircraft": "A320",
+            "count": 297
+        },
+        {
+            "aircraft": "P28A",
+            "count": 258
+        },
+        {
+            "aircraft": "B752",
+            "count": 218
+        },
+        {
+            "aircraft": "HELO",
+            "count": 210
+        }
+    ],
+    "2016": [
+        {
+            "aircraft": "B737",
+            "count": 890
+        },
+        {
+            "aircraft": "C172",
+            "count": 413
+        },
+        {
+            "aircraft": "A320",
+            "count": 304
+        },
+        {
+            "aircraft": "B738",
+            "count": 268
+        },
+        {
+            "aircraft": "HELO",
+            "count": 266
+        },
+        {
+            "aircraft": "CRJ2",
+            "count": 256
+        },
+        {
+            "aircraft": "E170",
+            "count": 239
+        },
+        {
+            "aircraft": "E145",
+            "count": 174
+        },
+        {
+            "aircraft": "CRJ9",
+            "count": 167
+        },
+        {
+            "aircraft": "B739",
+            "count": 166
+        }
+    ],
+    "2017": [
+        {
+            "aircraft": "B737",
+            "count": 816
+        },
+        {
+            "aircraft": "C172",
+            "count": 413
+        },
+        {
+            "aircraft": "A320",
+            "count": 304
+        },
+        {
+            "aircraft": "B738",
+            "count": 284
+        },
+        {
+            "aircraft": "CRJ2",
+            "count": 248
+        },
+        {
+            "aircraft": "HELO",
+            "count": 248
+        },
+        {
+            "aircraft": "B739",
+            "count": 176
+        },
+        {
+            "aircraft": "CRJ7",
+            "count": 148
+        },
+        {
+            "aircraft": "CRJ9",
+            "count": 137
+        },
+        {
+            "aircraft": "E145",
+            "count": 136
+        }
+    ]
+}
