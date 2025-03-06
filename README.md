@@ -1,3 +1,5 @@
+gh pages link: https://rprasad0206.github.io/CS4804Final/
+
 Laser Incident Analysis Dashboard
 Overview:
 This project is a web-based dashboard for analyzing laser incident data. It provides interactive visualizations to explore trends and patterns in laser incidents reported over time. The dashboard is built using HTML, CSS, and JavaScript, with the help of libraries such as D3.js and Plotly.js for data manipulation and visualization. The interface allows the users to filter data by year and select different types of visualizations to gain insights into the dataset.
