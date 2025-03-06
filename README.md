@@ -23,14 +23,6 @@ top_cities_by_year.json: The dataset containing the top cities by laser incident
 top_aircraft_by_year.json: The dataset containing the top aircrafts by laser incidents for each year.
 
 
-Project Website:
-Link to website -->
-
-
-Screencast Video:
-Link to video -->
-
-
 Non-Obvious Features:
 1. State abbreviations:
     Incidents by state visualization converts full state names to their 2-letter abbreviations
